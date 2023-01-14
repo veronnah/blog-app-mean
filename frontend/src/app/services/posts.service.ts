@@ -5,7 +5,7 @@ import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 
 export interface ResponseModel {
   message: string;
-  posts: PostModel[];
+  posts?: PostModel[];
 }
 
 @Injectable({
@@ -35,7 +35,14 @@ export class PostsService {
   }
 
   public addPost(post: PostModel): void {
-    this.posts.push(post);
-    this.postsUpdated$.next([...this.posts]);
+    this.http.post<ResponseModel>('http://localhost:3000/api/posts', post)
+      .subscribe({
+        next: (response: ResponseModel) => {
+          console.log(response.message);
+          this.posts.push(post);
+          this.postsUpdated$.next([...this.posts]);
+        },
+        error: () => {},
+      });
   }
 }
