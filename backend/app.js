@@ -15,7 +15,7 @@ mongoose.connect("mongodb+srv://veronnah:FI7KrsGonX19BAel@cluster0.wd9gqay.mongo
   });
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({extended: false}));
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -30,10 +30,12 @@ app.post('/api/posts', (req, res, next) => {
     content: req.body.content,
   });
 
-  console.log(post);
-  post.save();
-  res.status(201).json({
-    message: 'Post added successfully'
+  post.save().then((createdPost) => {
+    console.log(createdPost)
+    res.status(201).json({
+      message: 'Post added successfully',
+      postId: createdPost._id,
+    });
   });
 });
 
@@ -46,6 +48,12 @@ app.get('/api/posts', (req, res, next) => {
       });
     });
 });
+
+app.delete('/api/posts/:id', (req, res, next) => {
+  Post.deleteOne({_id: req.params.id}).then(result => {
+    res.status(200).json({message: 'Post deleted!'});
+  });
+})
 
 module.exports = app;
 

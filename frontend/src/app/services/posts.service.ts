@@ -6,6 +6,7 @@ import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 export interface ResponseModel {
   message: string;
   posts?: PostModel[];
+  postId?: string,
 }
 
 @Injectable({
@@ -13,7 +14,7 @@ export interface ResponseModel {
 })
 export class PostsService {
   private posts: PostModel[] = [];
-  private postsUpdated$: Subject<PostModel[]> = new Subject<PostModel[]>();
+  public postsUpdated$: Subject<PostModel[]> = new Subject<PostModel[]>();
 
   constructor(private http: HttpClient) {
   }
@@ -38,11 +39,15 @@ export class PostsService {
     this.http.post<ResponseModel>('http://localhost:3000/api/posts', post)
       .subscribe({
         next: (response: ResponseModel) => {
-          console.log(response.message);
+          post._id = response.postId;
           this.posts.push(post);
           this.postsUpdated$.next([...this.posts]);
         },
         error: () => {},
       });
+  }
+
+  public deletePost(id: string): Observable<ResponseModel> {
+    return this.http.delete<ResponseModel>('http://localhost:3000/api/posts/' + id);
   }
 }

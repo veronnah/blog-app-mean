@@ -8,7 +8,7 @@ import { Subscription } from "rxjs";
   templateUrl: './post-list.component.html',
   styleUrls: ['./post-list.component.scss']
 })
-export class PostListComponent implements OnInit, OnDestroy{
+export class PostListComponent implements OnInit, OnDestroy {
   public posts: PostModel[];
   private getPostsSub: Subscription;
 
@@ -20,6 +20,16 @@ export class PostListComponent implements OnInit, OnDestroy{
     this.postsService.postsUpdated
       .subscribe((posts: PostModel[]) => {
         this.posts = posts;
+      });
+  }
+
+  public onDelete(id: string): void {
+    this.postsService.deletePost(id)
+      .subscribe({
+        next: () => {
+          this.posts = this.posts.filter(post => post._id !== id);
+          this.postsService.postsUpdated$.next([...this.posts])
+        }
       });
   }
 
