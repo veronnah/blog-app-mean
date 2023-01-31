@@ -1,7 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { PostsService } from "../../services/posts.service";
+import { PostsService, ResponseModel } from "../../services/posts.service";
 import { PostModel } from "../../models/post.model";
 import { Subscription } from "rxjs";
+import { HttpErrorResponse } from "@angular/common/http";
 
 @Component({
   selector: 'app-post-list',
@@ -11,15 +12,22 @@ import { Subscription } from "rxjs";
 export class PostListComponent implements OnInit, OnDestroy {
   public posts: PostModel[];
   private getPostsSub: Subscription;
+  public isLoading: boolean;
 
   constructor(private postsService: PostsService) {
   }
 
   ngOnInit(): void {
-    this.postsService.getPosts();
-    this.postsService.postsUpdated
-      .subscribe((posts: PostModel[]) => {
-        this.posts = posts;
+    this.isLoading = true;
+    this.postsService.getPosts()
+      .subscribe({
+        next: (response: ResponseModel) => {
+          this.posts = response.posts;
+          this.postsService.postsUpdated$.next([...this.posts]);
+          this.isLoading = false;
+        },
+        error: (error: HttpErrorResponse) => {
+        },
       });
   }
 
