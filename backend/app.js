@@ -1,10 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-
-const Post = require('./models/post');
-
 const app = express();
+
+const postsRoutes = require('./routes/posts');
 
 mongoose.connect("mongodb+srv://veronnah:FI7KrsGonX19BAel@cluster0.wd9gqay.mongodb.net/node-angular?retryWrites=true&w=majority")
   .then(() => {
@@ -24,52 +23,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.post('/api/posts', (req, res, next) => {
-  const post = new Post({
-    title: req.body.title,
-    content: req.body.content,
-  });
-
-  post.save().then((createdPost) => {
-    console.log(createdPost)
-    res.status(201).json({
-      message: 'Post added successfully!',
-      postId: createdPost._id,
-    });
-  });
-});
-
-app.put('/api/posts/:id', (req, res, next) => {
-  const post = new Post({
-    _id: req.body._id,
-    title: req.body.title,
-    content: req.body.content,
-  });
-
-  Post.updateOne({_id: req.params.id}, post)
-    .then(result => {
-      console.log(result);
-      res.status(200).json({
-        message: 'Updated successfully!'
-      });
-    });
-});
-
-app.get('/api/posts', (req, res, next) => {
-  Post.find()
-    .then(posts => {
-      return res.status(200).json({
-        message: 'posts fetched successfully!',
-        posts: posts,
-      });
-    });
-});
-
-app.delete('/api/posts/:id', (req, res, next) => {
-  Post.deleteOne({_id: req.params.id}).then(result => {
-    res.status(200).json({message: 'Post deleted!'});
-  });
-})
+app.use('/api/posts', postsRoutes);
 
 module.exports = app;
 

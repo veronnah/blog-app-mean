@@ -27,7 +27,11 @@ export class PostCreateComponent implements OnInit {
       if (param.has('postId')) {
         this.mode = 'edit';
         this.postId = param.get('postId');
-        this.post = this.postsService.getPost(this.postId);
+        this.postsService.getPost(this.postId).subscribe({
+          next: (response)=> {
+            this.post = response;
+          }
+        });
       } else {
         this.mode = 'create';
         this.postId = null;
@@ -51,6 +55,11 @@ export class PostCreateComponent implements OnInit {
       post._id = this.postId;
       this.postsService.updatePost(post).subscribe({
         next: (response: ResponseModel) => {
+          const updatedPosts = [...this.postsService.posts];
+          const oldPostIndex = updatedPosts.findIndex(post => post._id === post._id);
+          updatedPosts[oldPostIndex] = post;
+          this.postsService.posts = updatedPosts;
+          this.postsService.postsUpdated$.next([...updatedPosts])
           console.log(response);
         }
       })

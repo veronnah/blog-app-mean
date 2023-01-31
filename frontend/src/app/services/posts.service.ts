@@ -13,7 +13,7 @@ export interface ResponseModel {
   providedIn: 'root'
 })
 export class PostsService {
-  private posts: PostModel[] = [];
+  public posts: PostModel[] = [];
   public postsUpdated$: Subject<PostModel[]> = new Subject<PostModel[]>();
 
   constructor(private http: HttpClient) {
@@ -35,8 +35,8 @@ export class PostsService {
       })
   }
 
-  public getPost(id: string): PostModel {
-    return {...this.posts.find(post => post._id === id)};
+  public getPost(id: string): Observable<PostModel> {
+    return this.http.get<PostModel>('http://localhost:3000/api/posts/' + id);
   }
 
   public addPost(post: PostModel): void {

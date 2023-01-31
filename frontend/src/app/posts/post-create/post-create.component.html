@@ -4,7 +4,7 @@
     <mat-form-field appearance="fill" class="example-full-width">
       <mat-label>Title</mat-label>
       <input matInput type="text"
-             [ngModel]="post.title"
+             [ngModel]="post?.title"
              name="title" #title="ngModel"
              ngModel required>
       <mat-error *ngIf="title.invalid">Please enter a post title</mat-error>
@@ -12,7 +12,7 @@
     <mat-form-field appearance="fill" class="example-full-width">
       <mat-label>Content</mat-label>
       <textarea matInput name="content"
-                [ngModel]="post.content"
+                [ngModel]="post?.content"
                 #content="ngModel"
                 ngModel required>
       </textarea>
