@@ -35,6 +35,10 @@ export class PostsService {
       })
   }
 
+  public getPost(id: string): PostModel {
+    return {...this.posts.find(post => post._id === id)};
+  }
+
   public addPost(post: PostModel): void {
     this.http.post<ResponseModel>('http://localhost:3000/api/posts', post)
       .subscribe({
@@ -45,6 +49,10 @@ export class PostsService {
         },
         error: () => {},
       });
+  }
+
+  public updatePost(post: PostModel): Observable<ResponseModel> {
+    return this.http.put<ResponseModel>('http://localhost:3000/api/posts/' + post._id, post);
   }
 
   public deletePost(id: string): Observable<ResponseModel> {

@@ -5,7 +5,9 @@
     </mat-expansion-panel-header>
     <p>{{ post.content }}</p>
     <mat-action-row>
-      <mat-icon>edit</mat-icon>
+      <a [routerLink]="['edit', post._id]">
+        <mat-icon>edit</mat-icon>
+      </a>
       <mat-icon (click)="onDelete(post._id)">delete</mat-icon>
     </mat-action-row>
   </mat-expansion-panel>
