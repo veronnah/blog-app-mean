@@ -20,7 +20,7 @@
              (change)="onImagePicked($event)"
              #filePicker>
     </div>
-    <div *ngIf="imagePreview !== '' && imagePreview"
+    <div *ngIf="imagePreview !== '' && imagePreview && form.get('image').valid"
       class="image-preview">
       <img [src]="imagePreview" [alt]="form.value.title">
     </div>
@@ -34,7 +34,7 @@
     <br>
     <button type="submit"
             mat-raised-button
-
+            [disabled]="form.invalid"
             color="accent">
       Save post
     </button>

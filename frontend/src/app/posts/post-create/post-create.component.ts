@@ -3,6 +3,7 @@ import { PostModel } from "../../models/post.model";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { PostsService, ResponseModel } from "../../services/posts.service";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
+import { mimeType } from "./mime-type.validator";
 
 @Component({
   selector: 'app-post-create',
@@ -62,6 +63,7 @@ export class PostCreateComponent implements OnInit {
       }),
       image: new FormControl('', {
         validators: Validators.required,
+        asyncValidators: [mimeType],
       }),
     })
   }
@@ -79,6 +81,9 @@ export class PostCreateComponent implements OnInit {
   }
 
   public onSavePost(): void {
+    if (this.form.invalid) {
+      return;
+    }
     this.isLoading = true;
 
     const post: PostModel = this.form.value;
@@ -98,7 +103,7 @@ export class PostCreateComponent implements OnInit {
     } else {
       post._id = this.postId;
       this.postsService.updatePost(post).subscribe({
-        next: (response: ResponseModel) => {
+        next: () => {
           const updatedPosts = [...this.postsService.posts];
           const oldPostIndex = updatedPosts.findIndex(post => post._id === post._id);
           updatedPosts[oldPostIndex] = post;
