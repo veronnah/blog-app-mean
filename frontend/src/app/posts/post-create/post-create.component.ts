@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { PostModel } from "../../models/post.model";
-import { NgForm } from "@angular/forms";
+import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { PostsService, ResponseModel } from "../../services/posts.service";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 
@@ -16,6 +16,8 @@ export class PostCreateComponent implements OnInit {
   private postId: string;
   public post: PostModel;
   public isLoading: boolean;
+  public form: FormGroup;
+  public imagePreview: string | ArrayBuffer;
 
   constructor(
     private postsService: PostsService,
@@ -35,6 +37,7 @@ export class PostCreateComponent implements OnInit {
           next: (response) => {
             this.isLoading = false;
             this.post = response;
+            this.form.patchValue(this.post);
           }
         });
       } else {
@@ -46,15 +49,39 @@ export class PostCreateComponent implements OnInit {
         }
       }
     });
+    this.initForm();
   }
 
-  public onSavePost(postForm: NgForm): void {
+  public initForm(): void {
+    this.form = new FormGroup({
+      title: new FormControl('', {
+        validators: [Validators.required, Validators.minLength(3)]
+      }),
+      content: new FormControl('', {
+        validators: [Validators.required]
+      }),
+      image: new FormControl('', {
+        validators: Validators.required,
+      }),
+    })
+  }
+
+  public onImagePicked(event: Event): void {
+    const file = (event.target as HTMLInputElement).files[0];
+    this.form.patchValue({image: file});
+
+    this.form.get('image').updateValueAndValidity();
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imagePreview = reader.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  public onSavePost(): void {
     this.isLoading = true;
 
-    const post: PostModel = {
-      title: postForm.value.title,
-      content: postForm.value.content,
-    };
+    const post: PostModel = this.form.value;
 
     if (this.mode === 'create') {
       this.postsService.addPost(post)
@@ -81,7 +108,7 @@ export class PostCreateComponent implements OnInit {
         }
       })
     }
-    postForm.resetForm();
+    this.form.reset();
   }
 
 }
