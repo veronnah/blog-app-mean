@@ -47,6 +47,8 @@ export class PostCreateComponent implements OnInit {
         this.post = {
           title: '',
           content: '',
+          image: null,
+          imagePath: '',
         }
       }
     });
@@ -92,7 +94,7 @@ export class PostCreateComponent implements OnInit {
       this.postsService.addPost(post)
         .subscribe({
           next: (response: ResponseModel) => {
-            post._id = response.postId;
+            post._id = response.post.id;
             this.postsService.posts.push(post);
             this.postsService.postsUpdated$.next([...this.postsService.posts]);
             this.router.navigate(['/']);
@@ -111,7 +113,7 @@ export class PostCreateComponent implements OnInit {
           this.postsService.postsUpdated$.next([...updatedPosts]);
           this.router.navigate(['/']);
         }
-      })
+      });
     }
     this.form.reset();
   }

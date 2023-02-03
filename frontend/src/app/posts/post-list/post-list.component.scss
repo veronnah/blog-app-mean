@@ -6,3 +6,14 @@
 .info-text {
   text-align: center;
 }
+
+mat-icon {
+  cursor: pointer;
+}
+
+.post-image img{
+  width: 100%;
+  object-fit: cover;
+  object-position: 20% 30%;
+  height: 300px;
+}

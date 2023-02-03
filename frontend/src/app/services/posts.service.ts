@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 import { PostModel } from "../models/post.model";
 import { Observable, Subject } from "rxjs";
-import { HttpClient, HttpErrorResponse } from "@angular/common/http";
-import { Router } from "@angular/router";
+import { HttpClient } from "@angular/common/http";
 
 export interface ResponseModel {
   message: string;
   posts?: PostModel[];
-  postId?: string,
+  post?: any,
 }
 
 @Injectable({
@@ -22,10 +21,6 @@ export class PostsService {
   ) {
   }
 
-  get postsUpdated(): Observable<PostModel[]> {
-    return this.postsUpdated$.asObservable();
-  }
-
   public getPosts(): Observable<ResponseModel> {
     return this.http.get<ResponseModel>('http://localhost:3000/api/posts');
   }
@@ -35,11 +30,28 @@ export class PostsService {
   }
 
   public addPost(post: PostModel): Observable<ResponseModel> {
-    return this.http.post<ResponseModel>('http://localhost:3000/api/posts', post);
+    const postData = new FormData();
+    postData.append('title', post.title);
+    postData.append('content', post.content);
+    postData.append('image', post.image);
+
+    return this.http.post<ResponseModel>('http://localhost:3000/api/posts', postData);
   }
 
   public updatePost(post: PostModel): Observable<ResponseModel> {
-    return this.http.put<ResponseModel>('http://localhost:3000/api/posts/' + post._id, post);
+    let postData;
+    console.log(post)
+    if (typeof (post.image) === 'object') {
+      postData = new FormData();
+      postData.append('id', post._id);
+      postData.append('title', post.title);
+      postData.append('content', post.content);
+      postData.append('image', post.image, post.title);
+    } else {
+      postData = post;
+      console.log(post);
+    }
+    return this.http.put<ResponseModel>('http://localhost:3000/api/posts/' + postData._id, postData);
   }
 
   public deletePost(id: string): Observable<ResponseModel> {
