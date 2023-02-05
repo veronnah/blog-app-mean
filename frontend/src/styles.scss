@@ -21,7 +21,15 @@ a {
 }
 
 .spacer {
-    flex: 1 1 auto;
+  flex: 1 1 auto;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.g-20 {
+  gap: 20px;
 }
 
 mat-spinner {

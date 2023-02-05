@@ -11,19 +11,24 @@
       <mat-error *ngIf="form.get('title').invalid">Please enter a post title</mat-error>
     </mat-form-field>
     <div>
-      <button mat-button
+      <button mat-stroked-button
               (click)="filePicker.click()"
               type="button">
         Pick image
       </button>
+      <br>
       <input type="file"
              (change)="onImagePicked($event)"
              #filePicker>
     </div>
-    <div *ngIf="imagePreview !== '' && imagePreview && form.get('image').valid"
-      class="image-preview">
+    <div *ngIf="imagePreview"
+         class="image-preview">
       <img [src]="imagePreview" [alt]="form.value.title">
     </div>
+    <mat-error *ngIf="form.get('image').errors?.invalidMimeType">
+      Invalid image format!
+    </mat-error>
+    <br>
     <mat-form-field appearance="fill" class="example-full-width">
       <mat-label>Content</mat-label>
       <textarea formControlName="content"
@@ -34,7 +39,7 @@
     <br>
     <button type="submit"
             mat-raised-button
-            [disabled]="form.invalid"
+            [disabled]="form.invalid && !imagePreview"
             color="accent">
       Save post
     </button>

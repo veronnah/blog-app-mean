@@ -40,7 +40,6 @@ export class PostsService {
 
   public updatePost(post: PostModel): Observable<ResponseModel> {
     let postData;
-    console.log(post)
     if (typeof (post.image) === 'object') {
       postData = new FormData();
       postData.append('id', post._id);
@@ -48,10 +47,15 @@ export class PostsService {
       postData.append('content', post.content);
       postData.append('image', post.image, post.title);
     } else {
-      postData = post;
-      console.log(post);
+      postData = {
+        id: post._id,
+        title: post.title,
+        content: post.content,
+        imagePath: post.image,
+      };
+      console.log(postData);
     }
-    return this.http.put<ResponseModel>('http://localhost:3000/api/posts/' + postData._id, postData);
+    return this.http.put<ResponseModel>('http://localhost:3000/api/posts/' + post._id, postData);
   }
 
   public deletePost(id: string): Observable<ResponseModel> {

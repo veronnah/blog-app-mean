@@ -38,12 +38,15 @@ export class PostCreateComponent implements OnInit {
           next: (response) => {
             this.isLoading = false;
             this.post = response;
+            console.log(response)
+            this.imagePreview = this.post.imagePath;
             this.form.patchValue(this.post);
           }
         });
       } else {
         this.mode = 'create';
         this.postId = null;
+        this.form.get('image').setValidators(Validators.required);
         this.post = {
           title: '',
           content: '',
@@ -64,7 +67,6 @@ export class PostCreateComponent implements OnInit {
         validators: [Validators.required]
       }),
       image: new FormControl('', {
-        validators: Validators.required,
         asyncValidators: [mimeType],
       }),
     })
@@ -77,7 +79,11 @@ export class PostCreateComponent implements OnInit {
     this.form.get('image').updateValueAndValidity();
     const reader = new FileReader();
     reader.onload = () => {
-      this.imagePreview = reader.result;
+      if (this.form.get('image').errors?.invalidMimeType) {
+        this.imagePreview = '';
+      } else {
+        this.imagePreview = reader.result;
+      }
     };
     reader.readAsDataURL(file);
   }
@@ -104,10 +110,14 @@ export class PostCreateComponent implements OnInit {
         });
     } else {
       post._id = this.postId;
+      if(!post.image) {
+        (post.image as any) = this.imagePreview;
+      }
+      console.log(post)
       this.postsService.updatePost(post).subscribe({
         next: () => {
           const updatedPosts = [...this.postsService.posts];
-          const oldPostIndex = updatedPosts.findIndex(post => post._id === post._id);
+          const oldPostIndex = updatedPosts.findIndex(p => p._id === post._id);
           updatedPosts[oldPostIndex] = post;
           this.postsService.posts = updatedPosts;
           this.postsService.postsUpdated$.next([...updatedPosts]);
