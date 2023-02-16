@@ -99,10 +99,7 @@ export class PostCreateComponent implements OnInit {
     if (this.mode === 'create') {
       this.postsService.addPost(post)
         .subscribe({
-          next: (response: ResponseModel) => {
-            post._id = response.post.id;
-            this.postsService.posts.push(post);
-            this.postsService.postsUpdated$.next([...this.postsService.posts]);
+          next: () => {
             this.router.navigate(['/']);
           },
           error: () => {
@@ -110,17 +107,11 @@ export class PostCreateComponent implements OnInit {
         });
     } else {
       post._id = this.postId;
-      if(!post.image) {
+      if (!post.image) {
         (post.image as any) = this.imagePreview;
       }
-      console.log(post)
       this.postsService.updatePost(post).subscribe({
         next: () => {
-          const updatedPosts = [...this.postsService.posts];
-          const oldPostIndex = updatedPosts.findIndex(p => p._id === post._id);
-          updatedPosts[oldPostIndex] = post;
-          this.postsService.posts = updatedPosts;
-          this.postsService.postsUpdated$.next([...updatedPosts]);
           this.router.navigate(['/']);
         }
       });

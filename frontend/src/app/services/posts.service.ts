@@ -6,6 +6,7 @@ import { HttpClient } from "@angular/common/http";
 export interface ResponseModel {
   message: string;
   posts?: PostModel[];
+  totalPostsNum: number,
   post?: any,
 }
 
@@ -14,15 +15,16 @@ export interface ResponseModel {
 })
 export class PostsService {
   public posts: PostModel[] = [];
-  public postsUpdated$: Subject<PostModel[]> = new Subject<PostModel[]>();
+  public postsUpdated$: Subject<any> = new Subject<any>();
 
   constructor(
     private http: HttpClient,
   ) {
   }
 
-  public getPosts(): Observable<ResponseModel> {
-    return this.http.get<ResponseModel>('http://localhost:3000/api/posts');
+  public getPosts(postsPerPage: number, currentPage: number): Observable<ResponseModel> {
+    const queryParams = `?pageSize=${postsPerPage}&page=${currentPage}`;
+    return this.http.get<ResponseModel>('http://localhost:3000/api/posts' + queryParams);
   }
 
   public getPost(id: string): Observable<PostModel> {

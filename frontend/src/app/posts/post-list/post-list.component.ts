@@ -10,12 +10,14 @@ import { PageEvent } from "@angular/material/paginator";
   templateUrl: './post-list.component.html',
   styleUrls: ['./post-list.component.scss']
 })
+
 export class PostListComponent implements OnInit, OnDestroy {
   public posts: PostModel[];
   private getPostsSub: Subscription;
   public isLoading: boolean;
-  public totalPosts: number = 10;
+  public totalPosts: number;
   public postsPerPage: number = 2;
+  public currentPage: number = 1;
   public pageSizeOptions = [1, 2, 5, 10];
 
   constructor(private postsService: PostsService) {
@@ -23,12 +25,19 @@ export class PostListComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.isLoading = true;
-    this.postsService.getPosts()
+    this.getPosts(this.postsPerPage, this.currentPage);
+  }
+
+  public getPosts(postsPerPage: number, currentPage): void {
+    this.postsService.getPosts(postsPerPage, currentPage)
       .subscribe({
         next: (response: ResponseModel) => {
           this.posts = response.posts;
-          console.log(this.posts)
-          this.postsService.postsUpdated$.next([...this.posts]);
+          this.totalPosts = response.totalPostsNum;
+          this.postsService.postsUpdated$.next({
+            posts: [...this.posts],
+            totalPostsNum: this.totalPosts,
+          });
           this.isLoading = false;
         },
         error: (error: HttpErrorResponse) => {
@@ -40,14 +49,16 @@ export class PostListComponent implements OnInit, OnDestroy {
     this.postsService.deletePost(id)
       .subscribe({
         next: () => {
-          this.posts = this.posts.filter(post => post._id !== id);
-          this.postsService.postsUpdated$.next([...this.posts])
+          this.getPosts(this.postsPerPage, this.currentPage)
         }
       });
   }
 
   public onPageChanged(event: PageEvent): void {
-    console.log(event)
+    this.isLoading = true;
+    const currentPageIndex = event.pageIndex + 1;
+    this.postsPerPage = event.pageSize;
+    this.getPosts(this.postsPerPage, currentPageIndex);
   }
 
   ngOnDestroy(): void {
