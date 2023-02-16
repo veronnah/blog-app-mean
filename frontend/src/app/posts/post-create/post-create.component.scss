@@ -14,3 +14,26 @@ input[type='file'] {
 .image-preview img {
   height: 100%;
 }
+
+.mat-form-field-wrapper, .mat-form-field-flex {
+  height: 100%;
+}
+
+textarea {
+  height: 96%;
+}
+
+::ng-deep {
+  .mat-form-field-flex {
+    height: 100%;
+  }
+
+  .mat-form-field-wrapper {
+    height: 100%;
+    padding-bottom: 29px !important;
+  }
+
+  .mat-form-field-infix {
+    height: 100%;
+  }
+}

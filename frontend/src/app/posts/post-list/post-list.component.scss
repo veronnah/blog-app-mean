@@ -11,7 +11,11 @@ mat-icon {
   cursor: pointer;
 }
 
-.post-image img{
+.post-image {
+  max-width: 50%;
+}
+
+.post-image img {
   width: 100%;
   object-fit: cover;
   object-position: 40% 65%;

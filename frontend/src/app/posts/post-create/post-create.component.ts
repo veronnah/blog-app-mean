@@ -28,6 +28,7 @@ export class PostCreateComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.initForm();
     this.route.paramMap.subscribe((param: ParamMap) => {
       if (param.has('postId')) {
         this.mode = 'edit';
@@ -55,7 +56,6 @@ export class PostCreateComponent implements OnInit {
         }
       }
     });
-    this.initForm();
   }
 
   public initForm(): void {

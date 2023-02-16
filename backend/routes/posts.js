@@ -48,7 +48,7 @@ router.post('', multer({storage: storage}).single('image'), (req, res, next) => 
 router.put('/:id', multer({storage: storage}).single('image'), (req, res, next) => {
   let imagePath = req.body.imagePath;
 
-  if(req.file) {
+  if (req.file) {
     const url = req.protocol + '://' + req.get('host');
     imagePath = url + '/images/' + req.file.filename;
   }
@@ -69,6 +69,15 @@ router.put('/:id', multer({storage: storage}).single('image'), (req, res, next) 
 });
 
 router.get('', (req, res, next) => {
+  const pageSize = +req.query.pageSize;
+  const currentPage = +req.query.page;
+  const postQuery = Post.find();
+
+  if (pageSize && currentPage) {
+    postQuery
+      .skip(pageSize * (currentPage - 1))
+      .limit(pageSize);
+  }
   Post.find()
     .then(posts => {
       return res.status(200).json({
