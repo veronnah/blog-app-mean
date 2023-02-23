@@ -6,7 +6,7 @@ import { HttpClient } from "@angular/common/http";
 export interface ResponseModel {
   message: string;
   posts?: PostModel[];
-  totalPostsNum: number,
+  totalPostsNum?: number,
   post?: any,
 }
 

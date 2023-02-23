@@ -19,5 +19,6 @@ mat-icon {
   width: 100%;
   object-fit: cover;
   object-position: 40% 65%;
-  height: 411px;
+  min-width: 300px;
+  max-height: 500px;
 }
