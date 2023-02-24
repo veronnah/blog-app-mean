@@ -10,20 +10,21 @@ import { AuthService } from "../auth.service";
 export class LoginComponent implements OnInit {
   public isLoading: boolean;
 
-  constructor(public authService: AuthService) { }
+  constructor(public authService: AuthService) {
+  }
 
   ngOnInit(): void {
   }
 
   public onLogin(loginForm: NgForm): void {
-    console.log(loginForm.value)
-    if(loginForm.invalid) {
+    if (loginForm.invalid) {
       return;
     }
 
     this.authService.login(loginForm.value)
-      .subscribe(res => {
-        console.log(res)
+      .subscribe(response => {
+        this.authService.token = response.token;
+        console.log(response)
       })
   }
 
