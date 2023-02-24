@@ -10,7 +10,7 @@
       </div>
       <p>{{ post.content }}</p>
     </div>
-    <mat-action-row>
+    <mat-action-row *ngIf="isUserAuthenticated">
       <a [routerLink]="['edit', post._id]">
         <mat-icon>edit</mat-icon>
       </a>
