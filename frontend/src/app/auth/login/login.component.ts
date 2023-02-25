@@ -20,12 +20,25 @@ export class LoginComponent implements OnInit {
     if (loginForm.invalid) {
       return;
     }
+    this.isLoading = true;
 
     this.authService.login(loginForm.value)
-      .subscribe(response => {
-        this.authService.token = response.token;
-        this.authService.authStatusListener.next(true);
-        console.log(response)
+      .subscribe({
+        next: (response) => {
+          const expiresInDuration = response.expiresIn;
+
+          this.authService.token = response.token;
+
+          this.authService.launchLogoutTimer(expiresInDuration);
+
+          const now = new Date();
+          const expirationDate = new Date(now.getTime() + expiresInDuration * 1000);
+          console.log(expirationDate)
+          this.authService.saveAuthData(response.token, expirationDate);
+
+          this.authService.authStatusListener.next(true);
+          this.isLoading = false;
+        }
       })
   }
 

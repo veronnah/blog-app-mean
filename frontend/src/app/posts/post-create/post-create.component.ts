@@ -1,7 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { PostModel } from "../../models/post.model";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
-import { PostsService, ResponseModel } from "../../services/posts.service";
+import { PostsService } from "../../services/posts.service";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 import { mimeType } from "./mime-type.validator";
 
@@ -36,10 +36,9 @@ export class PostCreateComponent implements OnInit {
         this.isLoading = true;
 
         this.postsService.getPost(this.postId).subscribe({
-          next: (response) => {
+          next: (response: PostModel) => {
             this.isLoading = false;
             this.post = response;
-            console.log(response)
             this.imagePreview = this.post.imagePath;
             this.form.patchValue(this.post);
           }
