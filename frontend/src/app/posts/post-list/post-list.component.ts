@@ -16,8 +16,9 @@ export class PostListComponent implements OnInit, OnDestroy {
   public posts: PostModel[];
   private getPostsSub: Subscription;
   private authStatusSub: Subscription;
+  public userId: string;
 
-  public isLoading: boolean;
+  public isLoading: boolean = true;
   public isUserAuthenticated: boolean;
 
   public totalPosts: number;
@@ -33,10 +34,19 @@ export class PostListComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.isUserAuthenticated = this.authService.isAuthenticated();
+    this.userId = this.authService.userId;
 
-    this.isLoading = true;
     this.getPosts(this.postsPerPage, this.currentPage);
+    this.authStatusListener();
+  }
 
+  public authStatusListener(): void {
+    this.authStatusSub = this.authService.getAuthStatusListener().subscribe({
+      next: (isAuthenticated: boolean) => {
+        this.isUserAuthenticated = isAuthenticated;
+        this.userId = this.authService.userId;
+      },
+    });
   }
 
   public getPosts(postsPerPage: number, currentPage): void {
@@ -54,11 +64,6 @@ export class PostListComponent implements OnInit, OnDestroy {
         error: (error: HttpErrorResponse) => {
         },
       });
-    this.authStatusSub = this.authService.getAuthStatusListener().subscribe({
-      next: (isAuthenticated: boolean) => {
-        this.isUserAuthenticated = isAuthenticated;
-      },
-    });
   }
 
   public onDelete(id: string): void {

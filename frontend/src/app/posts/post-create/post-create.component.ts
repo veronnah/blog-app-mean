@@ -29,6 +29,10 @@ export class PostCreateComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
+    this.getPostData();
+  }
+
+  public getPostData(): void {
     this.route.paramMap.subscribe((param: ParamMap) => {
       if (param.has('postId')) {
         this.mode = 'edit';
@@ -52,6 +56,7 @@ export class PostCreateComponent implements OnInit {
           content: '',
           image: null,
           imagePath: '',
+          creator: '',
         }
       }
     });

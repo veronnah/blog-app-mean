@@ -3,5 +3,6 @@ export interface PostModel {
   content: string;
   image: File,
   imagePath: string,
+  creator?: string,
   _id?: string;
 }

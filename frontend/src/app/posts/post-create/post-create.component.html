@@ -41,7 +41,7 @@
     <div class="d-flex justify-end">
       <button type="submit"
               mat-raised-button
-              [disabled]="form.invalid && !imagePreview"
+              [disabled]="form.invalid || !imagePreview"
               color="accent">
         Save post
       </button>

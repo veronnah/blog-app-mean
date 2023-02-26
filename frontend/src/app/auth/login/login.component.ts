@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from "@angular/forms";
 import { AuthService } from "../auth.service";
+import { LoginResponseModel } from "../../models/loginResponse.model";
 
 @Component({
   selector: 'app-login',
@@ -24,17 +25,16 @@ export class LoginComponent implements OnInit {
 
     this.authService.login(loginForm.value)
       .subscribe({
-        next: (response) => {
+        next: (response: LoginResponseModel) => {
           const expiresInDuration = response.expiresIn;
-
           this.authService.token = response.token;
+          this.authService.userId = response.userId;
 
           this.authService.launchLogoutTimer(expiresInDuration);
 
           const now = new Date();
           const expirationDate = new Date(now.getTime() + expiresInDuration * 1000);
-          console.log(expirationDate)
-          this.authService.saveAuthData(response.token, expirationDate);
+          this.authService.saveAuthData(response.token, expirationDate, response.userId);
 
           this.authService.authStatusListener.next(true);
           this.isLoading = false;

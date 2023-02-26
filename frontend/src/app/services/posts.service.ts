@@ -54,6 +54,7 @@ export class PostsService {
         title: post.title,
         content: post.content,
         imagePath: post.image,
+        creator: null,
       };
       console.log(postData);
     }
