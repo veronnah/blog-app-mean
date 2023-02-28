@@ -56,7 +56,6 @@ export class PostsService {
         imagePath: post.image,
         creator: null,
       };
-      console.log(postData);
     }
     return this.http.put<ResponseModel>('http://localhost:3000/api/posts/' + post._id, postData);
   }

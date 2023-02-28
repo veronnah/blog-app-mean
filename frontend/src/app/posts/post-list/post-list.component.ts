@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { PostsService, ResponseModel } from "../../services/posts.service";
 import { PostModel } from "../../models/post.model";
 import { Subscription } from "rxjs";
-import { HttpErrorResponse } from "@angular/common/http";
 import { PageEvent } from "@angular/material/paginator";
 import { AuthService } from "../../auth/auth.service";
 
@@ -16,6 +15,7 @@ export class PostListComponent implements OnInit, OnDestroy {
   public posts: PostModel[];
   private getPostsSub: Subscription;
   private authStatusSub: Subscription;
+  private deletePostsSub: Subscription;
   public userId: string;
 
   public isLoading: boolean = true;
@@ -61,16 +61,20 @@ export class PostListComponent implements OnInit, OnDestroy {
           });
           this.isLoading = false;
         },
-        error: (error: HttpErrorResponse) => {
+        error: () => {
+          this.isLoading = false;
         },
       });
   }
 
   public onDelete(id: string): void {
-    this.postsService.deletePost(id)
+    this.deletePostsSub = this.postsService.deletePost(id)
       .subscribe({
         next: () => {
-          this.getPosts(this.postsPerPage, this.currentPage)
+          this.getPosts(this.postsPerPage, this.currentPage);
+        },
+        error: () => {
+          this.isLoading = false;
         }
       });
   }
@@ -85,6 +89,7 @@ export class PostListComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.getPostsSub?.unsubscribe();
     this.authStatusSub?.unsubscribe();
+    this.deletePostsSub?.unsubscribe();
   }
 
 }

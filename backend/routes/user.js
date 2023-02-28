@@ -2,26 +2,23 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-
 const User = require('../models/user');
 
 router.post('/signup', (req, res, next) => {
   bcrypt.hash(req.body.password, 10,)
     .then(hash => {
       const user = new User({
-        email: req.body.email,
-        password: hash,
+        email: req.body.email, password: hash,
       });
       user.save()
         .then(result => {
           res.status(201).json({
-            message: 'User created!',
-            result: result,
+            message: 'User created!', result: result,
           });
         })
-        .catch(err => {
+        .catch(() => {
           res.status(500).json({
-            error: err,
+            message: 'This email is already taken!',
           });
         });
     });
@@ -43,26 +40,22 @@ router.post('/login', (req, res, next) => {
     .then(result => {
       if (!result) {
         return res.status(401).json({
-          message: 'Auth failed',
+          message: 'Invalid credentials!',
         });
       }
-      const token = jwt.sign(
-        {email: fetchedUser.email, userId: fetchedUser._id},
-        'secret_this_should_be_longer',
-        {expiresIn: '1h'});
+      const token = jwt.sign({
+        email: fetchedUser.email,
+        userId: fetchedUser._id
+      }, 'secret_this_should_be_longer', {expiresIn: '1h'});
       res.status(200).json({
-        token: token,
-        expiresIn: 3600,
-        message: 'Successfully authenticated',
-        userId: fetchedUser._id,
+        token: token, expiresIn: 3600, message: 'Successfully authenticated', userId: fetchedUser._id,
       })
     })
-    .catch(err => {
+    .catch(() => {
       return res.status(401).json({
-        message: 'Auth failed',
-        error: err,
-      })
-    })
+        message: 'Invalid credentials!',
+      });
+    });
 });
 
 module.exports = router;

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { NgForm } from "@angular/forms";
 import { AuthService } from "../auth.service";
 import { LoginResponseModel } from "../../models/loginResponse.model";
@@ -8,13 +8,10 @@ import { LoginResponseModel } from "../../models/loginResponse.model";
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
   public isLoading: boolean;
 
   constructor(public authService: AuthService) {
-  }
-
-  ngOnInit(): void {
   }
 
   public onLogin(loginForm: NgForm): void {
@@ -37,6 +34,9 @@ export class LoginComponent implements OnInit {
           this.authService.saveAuthData(response.token, expirationDate, response.userId);
 
           this.authService.authStatusListener.next(true);
+          this.isLoading = false;
+        },
+        error: () => {
           this.isLoading = false;
         }
       })

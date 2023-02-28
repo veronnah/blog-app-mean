@@ -104,9 +104,11 @@ export class PostCreateComponent implements OnInit {
       this.postsService.addPost(post)
         .subscribe({
           next: () => {
+            this.isLoading = false;
             this.router.navigate(['/']);
           },
           error: () => {
+            this.isLoading = false;
           },
         });
     } else {
@@ -116,11 +118,14 @@ export class PostCreateComponent implements OnInit {
       }
       this.postsService.updatePost(post).subscribe({
         next: () => {
+          this.isLoading = false;
           this.router.navigate(['/']);
+        },
+        error: () => {
+          this.isLoading = false;
         }
       });
     }
-    this.form.reset();
   }
 
 }
