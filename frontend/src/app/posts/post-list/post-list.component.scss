@@ -17,8 +17,7 @@ mat-icon {
 
 .post-image img {
   width: 100%;
-  object-fit: cover;
-  object-position: 40% 65%;
+  object-fit: contain;
   min-width: 300px;
   max-height: 500px;
 }

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { PostModel } from "../models/post.model";
 import { Observable, Subject } from "rxjs";
 import { HttpClient } from "@angular/common/http";
+import { environment } from "../../environments/environment";
 
 export interface ResponseModel {
   message: string;
@@ -24,11 +25,11 @@ export class PostsService {
 
   public getPosts(postsPerPage: number, currentPage: number): Observable<ResponseModel> {
     const queryParams = `?pageSize=${postsPerPage}&page=${currentPage}`;
-    return this.http.get<ResponseModel>('http://localhost:3000/api/posts' + queryParams);
+    return this.http.get<ResponseModel>(`${environment.apiUrl}/posts` + queryParams);
   }
 
   public getPost(id: string): Observable<PostModel> {
-    return this.http.get<PostModel>('http://localhost:3000/api/posts/' + id);
+    return this.http.get<PostModel>(`${environment.apiUrl}/posts/` + id);
   }
 
   public addPost(post: PostModel): Observable<ResponseModel> {
@@ -37,7 +38,7 @@ export class PostsService {
     postData.append('content', post.content);
     postData.append('image', post.image);
 
-    return this.http.post<ResponseModel>('http://localhost:3000/api/posts', postData);
+    return this.http.post<ResponseModel>(`${environment.apiUrl}/posts`, postData);
   }
 
   public updatePost(post: PostModel): Observable<ResponseModel> {
@@ -57,10 +58,10 @@ export class PostsService {
         creator: null,
       };
     }
-    return this.http.put<ResponseModel>('http://localhost:3000/api/posts/' + post._id, postData);
+    return this.http.put<ResponseModel>(`${environment.apiUrl}/posts/` + post._id, postData);
   }
 
   public deletePost(id: string): Observable<ResponseModel> {
-    return this.http.delete<ResponseModel>('http://localhost:3000/api/posts/' + id);
+    return this.http.delete<ResponseModel>(`${environment.apiUrl}/posts/` + id);
   }
 }
